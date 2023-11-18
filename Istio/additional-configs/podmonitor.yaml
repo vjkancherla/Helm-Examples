@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: my-istio-sidecars
+  labels:
+    app: my-istiod-sidecars
+    #This label, which is applied to the servicemonitor is essential for allow Prometheus to discover this servicemonitor
+    release: my-prometheus
+  namespace: staging
+spec:
+  selector:
+    matchLabels:
+      #This is the label added by istio to all pods that have a injected sidecar. Prometheus will find pods with this label
+      security.istio.io/tlsMode: 'istio'
+  podMetricsEndpoints:
+    - port: http-envoy-prom
+      path: /stats/prometheus

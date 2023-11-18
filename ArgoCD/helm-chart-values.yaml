@@ -1,0 +1,6 @@
+controller:
+  metrics:
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: my-prometheus

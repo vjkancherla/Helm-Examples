@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-simple-app
+  namespace: argo
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo
+  project: default
+  source:
+    path: ASimpleAppWithDependencies/Simple-App
+    repoURL:  'https://github.com/vjkancherla/ArgoCD-Helm'
+    helm:
+      valueFiles:
+        - values/dev-values.yaml
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -1,0 +1,31 @@
+https://artifacthub.io/packages/helm/grafana/grafana
+
+https://www.youtube.com/watch?v=XR_yWlOEGiA&list=PLyicRj904Z9-kyG_J5DAXbYhRmWUJ-Iqf
+
+>> helm repo add grafana https://grafana.github.io/helm-charts
+
+***BEFORE running helm install, update helm-chart-values.yaml with the correct IPs of Prometheus and Loki**
+>> helm install -n grafana --create-namespace my-grafana grafana/grafana --version 6.52.4 --values helm-chart-values.yaml
+
+>> helm status my-grafana -n grafana
+>> helm get all my-grafana -n grafana
+
+Go to Prometheus console and check, under targets, to see whether Grafana pods are showing up. Else, troubleshoot
+
+>> kubectl port-forward svc/my-grafana 8090:80 -n grafana
+
+Login to the console.
+username: admin
+password: kubectl get secret --namespace grafana my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+SEE this video for browsing logs collected by Loki in Grafana
+https://youtu.be/XHexyDqa_S0?t=1177
+
+SEE this video for browsing Prometheus metrics in Grafana
+https://youtu.be/9TJx7QTrTyo?t=1178
+
+ISTIO dashboards
+7645
+7636
+
+>> helm uninstall -n grafana my-grafana

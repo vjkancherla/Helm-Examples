@@ -1,0 +1,14 @@
+https://artifacthub.io/packages/helm/bitnami/wordpress
+
+NOTE: Install MetalLB first and configure IP Pool
+
+>> helm repo add my-repo https://charts.bitnami.com/bitnami
+
+>> helm install my-wordpress my-repo/wordpress --values helm-chart-values.yaml
+
+>> kubectl port-forward svc/my-wordpress 8080:80
+
+>> go to localhost:8080 in a browser
+
+
+>> helm delete wordpress

@@ -1,0 +1,20 @@
+#Create a serviceMonitor K8s Object to allow Prometheus to discover our pods for scraping
+#Creating ServiceMonitor K8s Object is more efficient than updating rules in Prometheus
+controller:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      #This label, which is applied to the servicemonitor is essential for allow Prometheus to discover this servicemonitor
+      labels:
+        release: my-prometheus
+
+
+speaker:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      #This label, which is applied to the servicemonitor is essential for allow Prometheus to discover this servicemonitor
+      labels:
+        release: my-prometheus

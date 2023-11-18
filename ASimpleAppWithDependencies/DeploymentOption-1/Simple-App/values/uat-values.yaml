@@ -1,0 +1,14 @@
+environment: "uat"
+
+message: "!!This is a UAT test!!"
+
+##Values for dependency chart Ingress-nginx
+ingress-nginx:
+  commonLabels:
+    app: my-simple-app
+
+  controller:
+    ingressClassResource:
+      name: uat-nginx
+    service:
+      type: ClusterIP

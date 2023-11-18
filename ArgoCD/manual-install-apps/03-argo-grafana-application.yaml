@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-grafana
+  namespace: argo
+spec:
+  project: default
+  source:
+    repoURL: 'https://grafana.github.io/helm-charts'
+    targetRevision: 6.52.9
+    helm:
+      values: |-
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+            - name: My-Prometheus
+              type: prometheus
+              #The my-prometheus-kube-prometh-prometheus SVC's ClusterIP:port
+              url: http://my-prometheus-kube-prometh-prometheus.prometheus.svc:9090
+              access: proxy
+              isDefault: true
+            - name: My-Loki
+              type: loki
+              #The service/my-loki SVC's ClusterIP:port
+              url: http://my-loki.loki.svc:3100
+              access: proxy
+        dashboardProviders:
+          dashboardproviders.yaml:
+            apiVersion: 1
+            providers:
+            - name: 'default'
+              orgId: 1
+              folder: ''
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+        dashboards:
+          default:
+            kubernetes:
+              gnetId: 10000
+              revision: 1
+              datasource: My-Prometheus
+        persistence:
+          size: 100Mi
+        serviceMonitor:
+          enabled: true
+          #We need to add a label to the ServiceMonitor K8s Object.
+          #Go to 51:29 minutes in https://www.youtube.com/watch?v=6xmWr7p5TE0
+          labels:
+            release: my-prometheus
+    chart: grafana
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: grafana
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

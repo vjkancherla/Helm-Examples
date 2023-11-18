@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-loki
+  namespace: argo
+spec:
+  project: default
+  source:
+    repoURL: 'https://grafana.github.io/helm-charts'
+    targetRevision: 2.9.10
+    helm:
+      values: |-
+        backend:
+          persistence:
+            size: 100Mi
+          replicas: 1
+        read:
+          persistence:
+            size: 50Mi
+          replicas: 1
+        write:
+          persistence:
+            size: 50Mi
+          replicas: 1
+    chart: loki-stack
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: loki
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

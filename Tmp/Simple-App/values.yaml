@@ -1,0 +1,12 @@
+environment: "dev"
+
+message: "!!This is a DEV test!!"
+
+##Values for dependency/child chart Ingress-nginx
+ingress-nginx:
+  commonLabels:
+    app: my-simple-app
+
+  controller:
+    service:
+      type: ClusterIP

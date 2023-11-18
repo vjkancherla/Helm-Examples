@@ -1,0 +1,22 @@
+MetalLB is a load-balancer implementation for bare metal/local Kubernetes clusters, using standard routing protocols.
+
+https://metallb.universe.tf/
+
+https://www.youtube.com/watch?v=xYiYIjlAgHY
+
+>> kubectl create namespace metallb
+
+>> helm repo add my-repo https://charts.bitnami.com/bitnami
+
+>> helm install -n metallb --create-namespace my-metallb my-repo/metallb --values helm-chart-values.yaml
+
+>> helm status my-metallb -n metallb
+>> helm get all my-metallb -n metallb
+
+#create IP-pool and L2Advertisement
+Update the IP address range in IPAddressPool.yaml to ensure that addresses are in the same address space as node ips
+>> kubectl apply -f ./additional-config
+
+Go to Prometheus console and check, under targets, to see whether MetalLB pods are showing up. Else, troubleshoot
+
+>> helm uninstall my-metallb -n metallb

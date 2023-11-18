@@ -1,0 +1,54 @@
+Deploy WITHOUT ArgoCD
+----------------------
+>> cd Helm/ASimpleAppWithDependencies/DeploymentOption-1
+
+1.This simple app uses Nginx-Ingress. Nginx-Ingress is declared as a dependecy in chart.yaml.
+Download the dependency chart (Nginx-Ingress) into Simple-App/charts/
+>> helm dependency update Simple-App/
+
+2. helm install -n dev --create-namespace my-simple-app Simple-App/
+
+3. Port forward to the Nginx-Controller's service.
+k port-forward svc/my-simple-app-ingress-nginx-controller 8082:80 -n dev
+
+The way this works is
+host:8082==>Nginx-Ingress-Controller-Service:80==>simple-app-ingress(my ingress)==>simple-app-svc:80==>simple-app-pod:80
+
+4. Uing NIP.io to get to our LOCAL app from the INTERNET:
+ http://dev.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+
+ The way this works is
+
+ http://dev.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html ==>host:8080==>Nginx-Ingress-Controller-Service:80==>simple-app-ingress(my ingress)==>simple-app-svc:80==>simple-app-pod:80
+
+Ingress config:
+- the simple-app, on the pod itself, is available at path "/" => localhost:80/simple-app-index.html
+- the Ingress redirects "/test" path to "/".
+- So, to access the simple-app using the Ingress we need to add "/test" to path
+So http://dev.my-simple-app.127.0.0.1.nip.io:8080/test/simple-app-index.html == localhost:80/simple-app-index.html
+
+
+Deploy with ArgoCD Option-1
+============================
+Install ArgoCD (see Helm/ArgoCD/Argo.txt), create port-forward and login to console
+>> cd Helm/ASimpleAppWithDependencies/DeploymentOption-1
+>> k create -f ./ArgoCD-App-files
+Deploys the same app in three namespaces - dev, uat and prod.
+Each "env" has its own ingress.
+You need to setup port-forwarding to each ingrex-controller-service in each namesapce.
+- http://dev.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+- http://uat.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+- http://prod.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+
+
+Deploy With ArgoCD Option-2, Using App-of-Apps
+=============================
+Install ArgoCD (see Helm/ArgoCD/Argo.txt), create port-forward and login to console
+>> cd Helm/ASimpleAppWithDependencies/DeploymentOption-2
+>> k create -f ./AppOfApps.yaml
+Deploys the same app in three namespaces - dev, uat and prod
+Each "env" has its own ingress.
+You need to setup port-forwarding to each ingrex-controller-service in each namesapce.
+- http://dev.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+- http://uat.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html
+- http://prod.my-simple-app.127.0.0.1.nip.io:8082/test/simple-app-index.html

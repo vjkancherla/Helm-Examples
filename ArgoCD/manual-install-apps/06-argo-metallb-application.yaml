@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-metallb
+  namespace: argo
+spec:
+  project: default
+  source:
+    repoURL: 'https://charts.bitnami.com/bitnami'
+    targetRevision: 4.2.0
+    helm:
+      values: |-
+        controller:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: my-prometheus
+        speaker:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: my-prometheus
+    chart: metallb
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: metallb
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

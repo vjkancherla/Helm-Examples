@@ -1,0 +1,17 @@
+https://artifacthub.io/packages/helm/grafana/loki
+
+https://www.youtube.com/watch?v=XR_yWlOEGiA&list=PLyicRj904Z9-kyG_J5DAXbYhRmWUJ-Iqf
+
+>> helm repo add grafana https://grafana.github.io/helm-charts
+
+>> helm install -n loki --create-namespace my-loki grafana/loki-stack --values helm-chart-values.yaml
+
+>> helm status my-loki -n loki
+>> helm get all my-loki -n loki
+
+#Create ServiceMonitors and an additonal service to allow Prometheus to monitor Loki and Promtail Pods
+>>kubectl apply -f ./additional-configs
+
+Go to Prometheus console and check, under targets, to see whether Loki and Promtail pods are showing up. Else, troubleshoot
+
+>> helm uninstall -n loki my-loki

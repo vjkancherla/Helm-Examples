@@ -1,0 +1,35 @@
+DEPLOY Prometheus-Loki-Grafana
+====================================
+
+1. Start K3D cluster
+
+2. Deploy MetalLB K8s LoadBalancer CRD using Helm
+  - Allows us to create SVCs using LoadBalancer type
+
+3. Deploy Prometheus stack using Helm
+  - used for monitoring the METRICS of K8s cluster, nodes, pods, and any pods that have instrumentation enabled
+
+4. Deploy Loki using Helm
+  - alternative to ElasticSearch
+  - DB for storing Logs
+  - Deploys agents/daemonset (prom-tail) to each node, which push logs to Loki
+
+5. Deploy Grafana using Helm
+  - connects to Prometheus and provides visualising
+  - Connects to Loki and provides visualising
+https://www.linkedin.com/pulse/logging-kubernetes-using-grafana-loki-avinash-kumar-chandran
+
+6. Deploy ISTIO (Data-Plane), ISTIOD(Control-Plane)
+
+6.1. Deploy an Example App to Work with ISTIO (see istio sub-directory)
+
+7. Deploy a WordPress application using Helm chart
+  - deploys WordPress + MariaDB
+  - Enables Metrics collection by Prometheus by creating ServiceMonitor Object and a Service to access the metrics
+============================
+
+ArgoCD Examples
+The /Users/vkancherla/Documents/Kubernetes/ArgoCD-Helm directory is stored in GitHub - https://github.com/vjkancherla/ArgoCD-Helm
+The /Users/vkancherla/Documents/Kubernetes/ArgoCD-Helm directory is a reflection of whats in the following dirs
+  -- /Users/vkancherla/Documents/Kubernetes/Helm/ArgoCD
+  -- /Users/vkancherla/Documents/Kubernetes/Helm/ASimpleAppWithDependencies

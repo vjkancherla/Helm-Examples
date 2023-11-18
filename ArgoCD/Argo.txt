@@ -1,0 +1,25 @@
+>> helm repo add argo https://argoproj.github.io/argo-helm
+
+>> helm install -n argo --create-namespace my-argo-cd argo/argo-cd --version 5.28.1
+
+>> kubectl port-forward service/my-argo-cd-argocd-server -n argo 8080:443
+
+Browse to localhost:8080
+username: admin
+password: kubectl -n argo get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+Refer to Helm/ArgoCD/App-of-Apps-Deployment.txt
+>> kubectl create -f apps.yaml
+
+To summarise, we create a single Argo Application, which in turn references all the other Applications that I want to deploy.
+
+My Macbook is not powerful enough to handle this deployment.
+
+
+ALTERNATIVE-APPROACH / MANUAL-APPROACH (so that my Macbook doesn't burn down)
+---------------------------------------
+1. CD to Helm/ArgoCD/manual-install-apps
+
+2. Manually run "Kubectl create" on each Application yaml in-turn
+
+3. On the ArgoCD console, ensure that the Application is in-sync before moving on to running kubectl create on the next one.

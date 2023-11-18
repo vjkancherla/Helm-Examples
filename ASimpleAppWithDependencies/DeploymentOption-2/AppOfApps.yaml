@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: simple-app-all-envs
+  namespace: argo
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo
+  project: default
+  source:
+    path: ASimpleAppWithDependencies/ArgoCD-App-files
+    repoURL:  'https://github.com/vjkancherla/ArgoCD-Helm'
+    targetRevision: HEAD

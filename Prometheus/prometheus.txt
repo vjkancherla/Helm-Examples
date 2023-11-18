@@ -1,0 +1,38 @@
+https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+
+https://www.youtube.com/watch?v=6xmWr7p5TE0
+https://www.youtube.com/watch?v=XR_yWlOEGiA&list=PLyicRj904Z9-kyG_J5DAXbYhRmWUJ-Iqf
+
+>> helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+>> helm repo update
+
+>> helm install -n prometheus --create-namespace my-prometheus prometheus-community/kube-prometheus-stack --values helm-chart-values.yaml
+
+>> helm status my-prometheus -n prometheus
+>> helm get all my-prometheus -n prometheus
+
+Note: By default this chart installs additional, dependent charts:
+kube-state-metrics : required for getting K8s cluster metrics
+prometheus-node-exporter: required for getting node-group node's metrics
+grafana : for visualising Prometheus ( I have disabled it)
+
+Note: The default value for prometheus service type is ClusterIP. Change it to LoadBalancer if you want use MetalLB
+
+>>  kubectl port-forward svc/my-prometheus-kube-prometh-prometheus 9090:9090 -n prometheus
+
+Goto localhost:9090 in Browser
+
+See 51:15 minutes in https://www.youtube.com/watch?v=6xmWr7p5TE0
+*Important*: To allow our Prometheus to discover ServiceMonitors and PodMonitors defined for other applications, we need a add a specific label to
+our the ServiceMonitors. To see what label we need to add look at a Prometheus CRD:
+>> kubectl get prometheuses.monitoring.coreos.com my-prometheus-kube-prometh-prometheus -n prometheus -o yaml
+Look for
+serviceMonitorSelector:
+    matchLabels:
+      release: my-prometheus
+
+After you have setup an application to publish metrics using ServiceMonitor Object, you can view the collected metrics in Prometheus.
+See 55:12 minutes in https://www.youtube.com/watch?v=6xmWr7p5TE0
+
+
+>> kubectl uninstall my-prometheus

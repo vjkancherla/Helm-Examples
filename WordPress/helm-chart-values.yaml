@@ -1,0 +1,28 @@
+ingress:
+  enabled: false
+
+#No PersistentVolume
+mariadb:
+  primary:
+    persistence:
+      enabled: false
+
+#Enable Metrics to be consumed by Prometheus
+metrics:
+  enabled: true
+  #Create a serviceMonitor K8s Object to allow Prometheus to discover our WP pods for scraping
+  #Creating ServiceMonitor K8s Object is more efficient than updating rules in Prometheus
+  serviceMonitor:
+    enabled: true
+    #We need to add a label to the ServiceMonitor K8s Object.
+    #Go to 51:29 minutes in https://www.youtube.com/watch?v=6xmWr7p5TE0
+    labels:
+      release: my-prometheus
+
+#No PersistentVolume
+persistence:
+  enabled: false
+
+#Use MetalLB LoadBalancer
+service:
+  type: LoadBalancer

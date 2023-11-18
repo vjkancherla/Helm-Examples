@@ -1,0 +1,70 @@
+
+https://www.youtube.com/watch?v=H4YIKwAQMKk
+
+1. Istio Base : https://artifacthub.io/packages/helm/istio-official/base
+This chart installs resources shared by all Istio revisions. This includes Istio CRDs.
+
+>> helm repo add istio https://istio-release.storage.googleapis.com/charts
+
+>> helm install -n istio-system --create-namespace istio-base istio/base
+
+>> helm status istio-base -n istio-system
+>> helm get all istio-base -n istio-system
+
+2. Istio Control Plane.
+>> helm install -n istio-system istiod istio/istiod
+
+>> helm status istiod -n istio-system
+>> helm get all istiod -n istio-system
+
+2.1 Istio Ingress Gateway
+>> helm install -n istio-system istio-ingressgateway istio/gateway
+
+An excellent explanation of how Istio ingressgateway works:
+https://blog.jayway.com/2018/10/22/understanding-istio-ingress-gateway-in-kubernetes/
+
+If you want to configure and test Istio ingressgateway:
+a. read the above blog
+b. uncomment the code in 07-virtualservice-with-gateway.yaml and 08-Gateway.yaml
+c. kubectl port-forward service/istio-ingressgateway 8080:80 -n istio-system
+d. while true; do curl -s --header "Host: example-app.com" http://localhost:8080/api/devices && echo '' && sleep 1; done
+NOTE: with you enable  Istio ingress + gateway, the internal servicemesh traffic routing will not work.
+
+3. Deploy example-app
+>> cd example-app
+>> helm install my-example-app ./example-app-chart
+
+4. SSH to the client Pod and run the following command
+>> kubectl exec -it client -n staging sh
+>> while true; do curl http://first-app:8080/api/devices && echo "" && sleep 1; done
+OR
+*I Have Done this* update Client.yaml to run the above command by specifying Command and Args fields
+Just run
+>> kubectl logs -f pods/client -n staging
+
+Without Istio traffic management, Traffic should be hitting both the versions of deployments, randomly
+
+5. Add the following two files to Helm/Istio/example-app/example-app-chart/templates to enable istio traffic management
+
+>> destinationrule.yaml
+>> virualservice.yaml
+
+6. Keep updating the Weights in virualservice.yaml and run "Helm upgrade"
+>> helm upgrade my-example-app ./example-app-chart
+
+In the client pod you will see traffic shifting between different versions of deployments
+
+7. To allow Prometheus to discover Pods that are with in the Sericve-Mesh, create a PodMonitor object.
+See Helm/Istio/additional-configs/podmonitor.yaml
+
+
+8. Kiali Istio monitoring/controlplane
+>> helm install \
+  --namespace istio-system \
+  --set auth.strategy="anonymous" \
+  --set external_services.prometheus.url="http://my-prometheus-kube-prometh-prometheus.prometheus.svc:9090" \
+  --set external_services.grafana.url="http://my-grafana.grafana.svc:80" \
+  --repo https://kiali.org/helm-charts \
+  kiali-server \
+  kiali-server
+>> kubectl port-forward svc/kiali 20001:20001 -n istio-system

@@ -1,0 +1,38 @@
+ArgoCD App of Apps deployment
+
+1. GitHub Repo which contains the Applications that I want to deploy :
+https://github.com/vjkancherla/ArgoCD-Helm
+
+
+2. In the GitHub Repo, all the Applications that I want to deploy, using helm chars from Artifact-Hub, are :
+a. defined as ArgoCD-Application manifests
+b. stored under https://github.com/vjkancherla/ArgoCD-Helm/Apps-From-ArtifactHub/templates
+c. there is another Helm chart - https://github.com/vjkancherla/ArgoCD-Helm/Additinal-Configs - which contains the addition configs required for the Applications
+
+
+3. Create a file called Apps.yaml.
+This file is a ArgoCD-Application manifest which references https://github.com/vjkancherla/ArgoCD-Helm
+We deploy this file to ArgoCD locally using Kubectl
+ArgoCD will "crawl the links" and deploy all the Applications that are defined in
+  - https://github.com/vjkancherla/ArgoCD-Helm/Apps-From-ArtifactHub/templates
+  - https://github.com/vjkancherla/ArgoCD-Helm/Additinal-Configs
+
+To summarise, we create a single Argo Application, which in turn references all the other Applications that I want to deploy.
+
+My Macbook is not powerful enough to handle this deployment.
+-----
+Reference
+https://medium.com/dzerolabs/turbocharge-argocd-with-app-of-apps-pattern-and-kustomized-helm-ea4993190e7c
+
+App1 stored is Git: DevOps-ToolKit
+App2 stored is Git: DevOps-Paradox
+
+App3 stored in Git:
+helm/templates
+  - Argo-Application1.yaml-> GitHub for Git-App1
+  - Argo-Application2.yaml-> GitHub for Git-App1
+
+
+App-of-Apps-Application.yaml
+  -> points to GitHub Git-App3:
+We deploy this onto ArgoCD manually using Kubectl

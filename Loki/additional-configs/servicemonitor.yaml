@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-loki
+  labels:
+    app: loki
+    #This label, which is applied to the servicemonitor is essential for allow Prometheus to discover this servicemonitor
+    release: my-prometheus
+  namespace: loki
+spec:
+  namespaceSelector:
+    matchNames:
+    - loki
+  selector:
+    matchLabels:
+      app: loki
+  endpoints:
+  - port: http-metrics
+    path: /metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-loki-promtail
+  labels:
+    app: loki-promtail
+    #This label, which is applied to the servicemonitor is essential for allow Prometheus to discover this servicemonitor
+    release: my-prometheus
+  namespace: loki
+spec:
+  namespaceSelector:
+    matchNames:
+    - loki
+  selector:
+    matchLabels:
+      app: loki-promtail
+  endpoints:
+  - port: http-metrics
+    path: /metrics
