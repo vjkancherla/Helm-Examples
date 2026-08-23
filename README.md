@@ -1,21 +1,43 @@
 # Helm Examples
 
-A collection of **Helm** charts covering a variety of applications and
-observability stacks, plus a "start here" guide.
+A gallery of Helm chart examples covering observability (Prometheus, Grafana,
+Loki), service mesh (Istio), load balancing (MetalLB), and application stacks
+(WordPress, Argo CD).
 
 ## What's inside
 
-- `ASimpleAppWithDependencies/` — a chart with dependencies.
-- `ArgoCD/`, `Grafana/`, `Istio/`, `Loki/`, `MetalLB/`, `Prometheus/`, `WordPress/`
-  — example charts for each application/stack.
-- `START-HERE.txt` — an onboarding guide.
-- `Tmp/` — temporary scratch charts.
+- `Prometheus` — Prometheus Helm chart setup.
+- `Grafana` — Grafana dashboarding with Helm.
+- `Loki` — Loki log aggregation with Helm.
+- `Istio` — Istio control-plane charts.
+- `MetalLB` — MetalLB load-balancer integration.
+- `WordPress` — WordPress + Helm values.
+- `ArgoCD` — Argo CD via Helm.
+- `ASimpleAppWithDependencies` — an app that depends on other charts.
+- `START-HERE.txt` — a suggested starting order.
+
+## What you'll learn
+
+- Installing common observability stacks with Helm.
+- Managing chart values and overrides.
+- Deploying application stacks and their dependencies.
 
 ## Tools covered
 
-- Helm (charts, dependencies, templates)
-- Observability stacks: Prometheus, Grafana, Loki, Istio, MetalLB
+- Helm 3 (charts, values, templating)
+- Prometheus / Grafana / Loki / Istio / MetalLB
 
 ## How to use
 
-Browse the charts for reference, and read `START-HERE.txt` to get started.
+Start with `START-HERE.txt`, then explore each directory for its chart and values.
+A typical install looks like:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install my-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring --create-namespace
+```
+
+## Related
+
+- Helm docs: https://helm.sh/docs/
